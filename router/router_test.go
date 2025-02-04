@@ -294,7 +294,6 @@ func TestCreateNotification(t *testing.T) {
 				), nil
 			},
 			mockSender: func(msg *service.Notification) (messageId string, err error) {
-				fmt.Println("msg", msg.Event, msg.From.Sub, msg.SendTo[0].Sub)
 				if msg.SendTo[0].Sub == "fail" {
 					return "", errors.New("send error")
 				}
