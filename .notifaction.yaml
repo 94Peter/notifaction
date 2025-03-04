@@ -1,0 +1,26 @@
+service: notification
+
+api:
+  port: 9080
+  debug: true
+  test: true
+
+
+log:
+  level: debug
+  target: os
+
+mail:
+  provider: aws
+  header2data: X-Forwarded-Host,X-Forwarded-Host2
+
+aws:
+  ses:
+    from: "\"OOSA Group\" <developer@oosa.life>"
+    region: ap-northeast-1
+    credentails:
+      filename: /Users/peter/Codes/oosa/secrets/.aws/credentails
+      profile: default
+
+identity:
+  url: http://localhost:4434

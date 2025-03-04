@@ -1,0 +1,56 @@
+---
+kind: pipeline
+type: exec
+name: default
+
+platform:
+  os: darwin
+  arch: amd64
+
+steps:
+- name: check-golangci
+  commands:
+  - make check-golangci
+- name: build-docker-image
+  commands:
+  - make docker IMAGE_TAG=test
+- name: restart service
+  commands:
+  - docker compose -f .docker-compose/test.yaml down
+  - docker compose -f .docker-compose/test.yaml up -d
+  - docker image prune -f
+
+trigger:
+  branch:
+  - main
+  event:
+  - push
+
+---
+
+kind: pipeline
+type: exec
+name: build-and-push
+
+platform:
+  os: darwin
+  arch: amd64
+  
+steps:
+- name: build-docker
+  commands:
+  - export PATH=$PATH:/opt/homebrew/bin
+  - export REGISTRY_PWD=$docker_password
+  - dagger call build-product --source=. --tag=${DRONE_TAG##v} --password=env:REGISTRY_PWD --user=$docker_user --image=app-notifaction --dockerfile=.docker/Dockerfile.distroless
+  environment:
+    docker_user:
+        from_secret: docker_username
+    docker_password:
+        from_secret: docker_password
+trigger:
+  branch:
+  - main
+  event:
+  - tag
+
+...

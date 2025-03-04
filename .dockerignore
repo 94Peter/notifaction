@@ -1,0 +1,6 @@
+.aws
+.docker/
+.temp.yaml
+.git/
+.docker-compose/
+apply.yaml
